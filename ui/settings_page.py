@@ -223,46 +223,6 @@ class SettingsPage(QWidget):
         self.validation_label.setVisible(False)
         layout.addWidget(self.validation_label)
 
-        # Delay selection (2.0 - 10.0 seconds) with 0.5s steps
-        layout.addWidget(QLabel("Délai (secondes):"))
-        h = QHBoxLayout()
-        self.slider = QSlider(Qt.Horizontal)
-        # slider operates in half-second steps by scaling values * 2
-        self.slider.setMinimum(int(2 * 2))  # corresponds to 2.0s
-        self.slider.setMaximum(int(10 * 2))  # corresponds to 10.0s
-        # use 4.0s as the default if no saved config exists (user request)
-        initial_delay = float(self.cfg.get("delay_seconds", 4.0))
-        self.slider.setValue(int(initial_delay * 2))
-        self.slider.setTickInterval(1)
-        self.slider.setTickPosition(QSlider.TicksBelow)
-        self.delay_label = QLabel(f"{initial_delay:.1f}")
-
-        # double spinbox for 0.5s precision
-        self.spin = QDoubleSpinBox()
-        self.spin.setRange(2.0, 10.0)
-        self.spin.setSingleStep(0.5)
-        self.spin.setDecimals(1)
-        self.spin.setValue(initial_delay)
-
-        # sync slider and spinbox (slider value is int representing half-seconds)
-        def _slider_changed(v):
-            val = v / 2.0
-            self.delay_label.setText(f"{val:.1f}")
-            if abs(self.spin.value() - val) > 1e-6:
-                self.spin.setValue(val)
-
-        def _spin_changed(v):
-            intv = int(round(v * 2))
-            if self.slider.value() != intv:
-                self.slider.setValue(intv)
-            self.delay_label.setText(f"{v:.1f}")
-
-        self.slider.valueChanged.connect(_slider_changed)
-        self.spin.valueChanged.connect(_spin_changed)
-        h.addWidget(self.slider)
-        h.addWidget(self.spin)
-        layout.addLayout(h)
-
         # Storage path
         layout.addWidget(QLabel("Chemin pour stocker le script:"))
         sp_h = QHBoxLayout()
@@ -325,8 +285,6 @@ class SettingsPage(QWidget):
         self.cfg["attract_shortcut"] = a
         self.cfg["repel_shortcut"] = r
         self.cfg["toggle_shortcut"] = t
-        # store delay as float (seconds)
-        self.cfg["delay_seconds"] = float(self.spin.value())
         self.cfg["storage_path"] = self.storage_input.text().strip()
         self.cfg["first_run"] = False
         save_config(self.cfg)

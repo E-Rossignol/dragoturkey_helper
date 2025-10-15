@@ -124,16 +124,6 @@ class MainPage(QWidget):
         self.toggle.setStyleSheet(badge_style)
         form.addRow(lab_tog_w, self.toggle)
 
-        # Delay formatting as highlighted pill
-        delay = self.cfg.get("delay_seconds", "")
-        try:
-            delay_str = f"{float(delay):.1f}"
-        except Exception:
-            delay_str = str(delay)
-        self.delay_lbl = QLabel(f"{delay_str} secondes")
-        self.delay_lbl.setStyleSheet("color: #d6d6d6; background: transparent; padding: 4px;")
-        form.addRow("Délai:", self.delay_lbl)
-
         # Storage path (absolute) with icon button
         raw_path = (self.cfg.get("storage_path") or "").strip()
         if raw_path:
@@ -226,12 +216,6 @@ class MainPage(QWidget):
         self.attract.setText(self.cfg.get("attract_shortcut", ""))
         self.repel.setText(self.cfg.get("repel_shortcut", ""))
         self.toggle.setText(self.cfg.get("toggle_shortcut", ""))
-        delay = self.cfg.get("delay_seconds", "")
-        try:
-            delay_str = f"{float(delay):.1f}"
-        except Exception:
-            delay_str = str(delay)
-        self.delay_lbl.setText(f"{delay_str} secondes")
         raw_path = (self.cfg.get("storage_path") or "").strip()
         if raw_path:
             try:
@@ -275,7 +259,6 @@ class MainPage(QWidget):
                 f.write(f"Attract: {a}\n")
                 f.write(f"Repel: {r}\n")
                 f.write(f"Toggle: {t}\n")
-                f.write(f"Delay: {cfg.get('delay_seconds')}\n")
                 f.write(f"Storage path: {path or out}\n")
             # show a dialog with OK and "Ouvrir le dossier" options
             dlg = QMessageBox(self)
