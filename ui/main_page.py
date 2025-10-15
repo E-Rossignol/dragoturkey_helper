@@ -135,7 +135,7 @@ class MainPage(QWidget):
             abs_path = "(non défini)"
 
         # Présentation du label de gauche similaire à l'entrée Start/Stop
-        label_path = QLabel("Chemin pour stocker le script:")
+        label_path = QLabel("Chemin: ")
         label_path.setStyleSheet("color: #d6d6d6; font-weight: 600;")
         lab_path_h = QHBoxLayout()
         lab_path_h.setContentsMargins(0, 0, 0, 0)
@@ -147,7 +147,7 @@ class MainPage(QWidget):
         self.path_lbl = QLabel(abs_path)
         self.path_lbl.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.path_lbl.setStyleSheet(badge_style + " font-family: 'Consolas', 'Courier New', monospace;")
-        self.path_lbl.setMinimumWidth(420)
+        self.path_lbl.setMinimumHeight(70)
         self.path_lbl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         form.addRow(lab_path_w, self.path_lbl)

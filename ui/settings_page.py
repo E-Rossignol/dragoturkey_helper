@@ -7,12 +7,10 @@ from PyQt5.QtWidgets import (
     QPushButton,
     QFileDialog,
     QHBoxLayout,
-    QFormLayout,
-    QSlider,
-    QDoubleSpinBox,
     QMessageBox,
+    QSizePolicy,
 )
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, QPoint
 from PyQt5.QtGui import QPixmap
 
 from config import load_config, save_config, set_first_run
@@ -30,6 +28,8 @@ class KeySequenceEdit(QLineEdit):
         super().__init__(parent)
         self._sequence = ""
         self.setReadOnly(True)
+        # center displayed sequence text
+        self.setAlignment(Qt.AlignCenter)
         self._recording = False
         self._prev_display = ""
 
@@ -142,7 +142,7 @@ class KeySequenceEdit(QLineEdit):
 
 
 class SettingsPage(QWidget):
-    """Page to set attract/repel shortcuts, delay and storage path."""
+    """Page to set attract/repel shortcuts and storage path."""
 
     def __init__(self, navigate_to):
         super().__init__()
@@ -151,9 +151,8 @@ class SettingsPage(QWidget):
 
         layout = QVBoxLayout()
 
-        # Shortcuts form: icon before the left label, inputs on the right
-        form = QFormLayout()
-        form.setLabelAlignment(Qt.AlignLeft)
+        # We'll lay out each setting row separately so we can insert stretches
+        # and distribute the four elements evenly.
 
         # Attract label with icon on the left
         kiss_path = Path(__file__).resolve().parent.parent / "ressources" / "kiss.png"
@@ -161,7 +160,7 @@ class SettingsPage(QWidget):
         kiss_lbl = QLabel()
         if not kiss_pix.isNull():
             kiss_lbl.setPixmap(kiss_pix.scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        label_att = QLabel("Attirer la monture")
+        label_att = QLabel("Attirer la monture:")
         label_att.setStyleSheet("font-weight: 600; color: #d6d6d6;")
         lab_att_h = QHBoxLayout()
         lab_att_h.setContentsMargins(0, 0, 0, 0)
@@ -174,8 +173,17 @@ class SettingsPage(QWidget):
         if self.cfg.get("attract_shortcut"):
             self.attract_input.setText(self.cfg.get("attract_shortcut"))
             self.attract_input._sequence = self.cfg.get("attract_shortcut")
-
-        form.addRow(lab_att_w, self.attract_input)
+        # fixed width 100px, centered text; align to the right of the row with spacing
+        self.attract_input.setFixedWidth(300)
+        # create a row container: left label (with icon) + stretch + spacing(20) + fixed field
+        att_row = QWidget()
+        att_row_h = QHBoxLayout()
+        att_row_h.setContentsMargins(0, 0, 0, 0)
+        att_row_h.addWidget(lab_att_w)
+        att_row_h.addStretch()
+        att_row_h.addSpacing(20)
+        att_row_h.addWidget(self.attract_input)
+        att_row.setLayout(att_row_h)
 
         # Repel label with icon on the left
         fart_path = Path(__file__).resolve().parent.parent / "ressources" / "fart.png"
@@ -183,7 +191,7 @@ class SettingsPage(QWidget):
         fart_lbl = QLabel()
         if not fart_pix.isNull():
             fart_lbl.setPixmap(fart_pix.scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation))
-        label_rep = QLabel("Eloigner la monture")
+        label_rep = QLabel("Eloigner la monture:")
         label_rep.setStyleSheet("font-weight: 600; color: #d6d6d6;")
         lab_rep_h = QHBoxLayout()
         lab_rep_h.setContentsMargins(0, 0, 0, 0)
@@ -196,11 +204,20 @@ class SettingsPage(QWidget):
         if self.cfg.get("repel_shortcut"):
             self.repel_input.setText(self.cfg.get("repel_shortcut"))
             self.repel_input._sequence = self.cfg.get("repel_shortcut")
-
-        form.addRow(lab_rep_w, self.repel_input)
+        # fixed width 100px and right-aligned in the row
+        self.repel_input.setFixedWidth(300)
+        # repel row
+        rep_row = QWidget()
+        rep_row_h = QHBoxLayout()
+        rep_row_h.setContentsMargins(0, 0, 0, 0)
+        rep_row_h.addWidget(lab_rep_w)
+        rep_row_h.addStretch()
+        rep_row_h.addSpacing(20)
+        rep_row_h.addWidget(self.repel_input)
+        rep_row.setLayout(rep_row_h)
 
         # Toggle label
-        label_tog = QLabel("Start/Stop le script")
+        label_tog = QLabel("Start/Stop le script:")
         label_tog.setStyleSheet("font-weight: 600; color: #d6d6d6;")
         lab_tog_h = QHBoxLayout()
         lab_tog_h.setContentsMargins(0, 0, 0, 0)
@@ -212,38 +229,67 @@ class SettingsPage(QWidget):
         if self.cfg.get("toggle_shortcut"):
             self.toggle_input.setText(self.cfg.get("toggle_shortcut"))
             self.toggle_input._sequence = self.cfg.get("toggle_shortcut")
+        # fixed width 100px and right-aligned in the row
+        self.toggle_input.setFixedWidth(300)
+        # toggle row
+        tog_row = QWidget()
+        tog_row_h = QHBoxLayout()
+        tog_row_h.setContentsMargins(0, 0, 0, 0)
+        tog_row_h.addWidget(lab_tog_w)
+        tog_row_h.addStretch()
+        tog_row_h.addSpacing(20)
+        tog_row_h.addWidget(self.toggle_input)
+        tog_row.setLayout(tog_row_h)
 
-        form.addRow(lab_tog_w, self.toggle_input)
-
-        layout.addLayout(form)
+        # Now add the four rows to the main vertical layout with stretches between
+        layout.addStretch()
+        layout.addWidget(att_row)
+        layout.addStretch()
+        layout.addWidget(rep_row)
+        layout.addStretch()
+        layout.addWidget(tog_row)
+        layout.addStretch()
 
         # Inline validation label (hidden unless error)
         self.validation_label = QLabel("")
         self.validation_label.setStyleSheet("color: #ff8080;")
         self.validation_label.setVisible(False)
-        layout.addWidget(self.validation_label)
+        # validation_label will be placed above the save button (bottom)
 
-        # Storage path
-        layout.addWidget(QLabel("Chemin pour stocker le script:"))
-        sp_h = QHBoxLayout()
+        # storage row (fourth element)
+        label_path = QLabel("Chemin du script:")
+        label_path.setStyleSheet("font-weight: 600; color: #d6d6d6;")
+        storage_row = QWidget()
+        storage_h = QHBoxLayout()
+        storage_h.setContentsMargins(0, 0, 0, 0)
+        storage_h.addWidget(label_path)
+        storage_h.addSpacing(20)
+        # storage field expands but leave room for the fixed "Parcourir" button
         self.storage_input = QLineEdit(self.cfg.get("storage_path", ""))
+        self.storage_input.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
         self.browse = QPushButton("Parcourir")
+        self.browse.setFixedWidth(150)
         self.browse.clicked.connect(self._browse)
-        sp_h.addWidget(self.storage_input)
-        sp_h.addWidget(self.browse)
-        layout.addLayout(sp_h)
+        storage_h.addWidget(self.storage_input, 1)
+        storage_h.addWidget(self.browse)
+        storage_row.setLayout(storage_h)
+        layout.addWidget(storage_row)
 
         # Action buttons
         self.save_btn = QPushButton("Valider et enregistrer")
+        # push validation label and save button to bottom
+        layout.addStretch()
+        layout.addWidget(self.validation_label)
         layout.addWidget(self.save_btn)
 
         self.setLayout(layout)
 
         self.save_btn.clicked.connect(self._save)
 
-        # connect live validation for shortcuts
+        # connect live validation for all three shortcut fields
         self.attract_input.textChanged.connect(lambda _: self._validate_shortcuts())
         self.repel_input.textChanged.connect(lambda _: self._validate_shortcuts())
+        self.toggle_input.textChanged.connect(lambda _: self._validate_shortcuts())
         # initial validation state
         self._validate_shortcuts()
 
@@ -271,6 +317,23 @@ class SettingsPage(QWidget):
         d = QFileDialog.getExistingDirectory(self, "Choisir dossier de stockage")
         if d:
             self.storage_input.setText(d)
+
+    # simple transient toast shown near bottom-center of the settings page
+    def _show_toast(self, text: str, timeout_ms: int = 1200):
+        toast = QLabel(text)
+        toast.setWindowFlags(Qt.ToolTip | Qt.WindowStaysOnTopHint)
+        toast.setStyleSheet(
+            "background: rgba(50,50,50,0.95); color: white; padding: 8px 12px; border-radius: 6px; font-weight: 600;"
+        )
+        toast.adjustSize()
+        # position at bottom-center of the widget, slightly above the bottom edge
+        center = self.mapToGlobal(self.rect().center())
+        x = center.x() - toast.width() // 2
+        bottom = self.mapToGlobal(self.rect().bottomLeft()).y()
+        y = bottom - toast.height() - 24
+        toast.move(QPoint(x, y))
+        toast.show()
+        QTimer.singleShot(timeout_ms, toast.close)
 
     def _save(self):
         a = self.attract_input.sequence() or self.attract_input.text().strip()
@@ -314,7 +377,6 @@ class SettingsPage(QWidget):
             QMessageBox.warning(self, "Validation", "Les deux raccourcis doivent être différents.")
             return
 
-        delay = float(self.spin.value())
         storage = self.storage_input.text().strip()
 
         # determine output path
@@ -338,7 +400,6 @@ class SettingsPage(QWidget):
             with open(out, "w", encoding="utf-8") as f:
                 f.write(f"Attract: {a}\n")
                 f.write(f"Repel: {r}\n")
-                f.write(f"Delay: {delay}\n")
                 f.write(f"Storage path: {storage or out}\n")
             QMessageBox.information(self, "Génération terminée", f"Fichier créé: {out}")
         except Exception as e:
@@ -347,13 +408,14 @@ class SettingsPage(QWidget):
     def _validate_shortcuts(self):
         a = self.attract_input.sequence() or self.attract_input.text().strip()
         r = self.repel_input.sequence() or self.repel_input.text().strip()
-        if not a or not r:
-            self.validation_label.setText("Les deux raccourcis doivent être renseignés.")
+        t = self.toggle_input.sequence() or self.toggle_input.text().strip()
+        if not a or not r or not t:
+            self.validation_label.setText("Tous les raccourcis doivent être renseignés.")
             self.validation_label.setVisible(True)
             self.save_btn.setEnabled(False)
             return
-        if a == r:
-            self.validation_label.setText("Les deux raccourcis ne peuvent pas être identiques.")
+        if a == r or a == t or r == t:
+            self.validation_label.setText("Les raccourcis ne peuvent pas être identiques.")
             self.validation_label.setVisible(True)
             self.save_btn.setEnabled(False)
             return
@@ -400,6 +462,5 @@ class RegeneratePage(QWidget):
         with open(out, "w", encoding="utf-8") as f:
             f.write(f"Attract: {self.cfg.get('attract_shortcut')}\n")
             f.write(f"Repel: {self.cfg.get('repel_shortcut')}\n")
-            f.write(f"Delay: {self.cfg.get('delay_seconds')}\n")
         # go back to menu
         self.navigate_to("menu")
