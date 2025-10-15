@@ -1,0 +1,43 @@
+/* Dark classy theme */
+QWidget {
+  background: #0f1115;
+  color: #e6eef6;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  font-size: 12pt;
+}
+
+QPushButton {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #2b2f36, stop:1 #1f2226);
+  border: 1px solid #2f3440;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+QPushButton:hover {
+  background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #3a3f48, stop:1 #272a30);
+}
+QPushButton:pressed {
+  background: #15171a;
+}
+
+QLineEdit, QTextEdit {
+  background: #0b0c0f;
+  border: 1px solid #26292f;
+  padding: 6px;
+  border-radius: 4px;
+  color: #e6eef6;
+}
+
+QLabel#resultLabel {
+  background: transparent;
+  color: #9fd3c7;
+  font-weight: 600;
+}
+
+#splashTitle {
+  font-size: 20pt;
+  color: #ffffff;
+  font-weight: 700;
+}
+#splashSub {
+  color: #9aa7b2;
+}

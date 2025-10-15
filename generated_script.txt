@@ -1,0 +1,4 @@
+Attract: Ctrl+S
+Repel: Ctrl+A
+Delay: 8.0
+Storage path: C:/Users/erwan/OneDrive/Bureau/desktop_software_test
