@@ -18,9 +18,8 @@ from PyQt5.QtWidgets import (
     QDialog,
     QTextBrowser,
 )
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QPixmap, QIcon
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
 
 from config import load_config
 
@@ -36,6 +35,12 @@ class MainPage(QWidget):
         super().__init__()
         self.navigate_to = navigate_to
         self.cfg = load_config()
+
+        # set application and window icon from ressources/fart.png (if available)
+        icon_path = Path(__file__).resolve().parent.parent / "ressources" / "dd_icon.ico"
+        if icon_path.exists():
+            QApplication.setWindowIcon(QIcon(str(icon_path)))
+            self.setWindowIcon(QIcon(str(icon_path)))
 
         root_layout = QVBoxLayout()
 
@@ -124,16 +129,6 @@ class MainPage(QWidget):
         self.toggle.setStyleSheet(badge_style)
         form.addRow(lab_tog_w, self.toggle)
 
-        # Delay formatting as highlighted pill
-        delay = self.cfg.get("delay_seconds", "")
-        try:
-            delay_str = f"{float(delay):.1f}"
-        except Exception:
-            delay_str = str(delay)
-        self.delay_lbl = QLabel(f"{delay_str} secondes")
-        self.delay_lbl.setStyleSheet("color: #d6d6d6; background: transparent; padding: 4px;")
-        form.addRow("Délai:", self.delay_lbl)
-
         # Storage path (absolute) with icon button
         raw_path = (self.cfg.get("storage_path") or "").strip()
         if raw_path:
@@ -145,7 +140,7 @@ class MainPage(QWidget):
             abs_path = "(non défini)"
 
         # Présentation du label de gauche similaire à l'entrée Start/Stop
-        label_path = QLabel("Chemin pour stocker le script:")
+        label_path = QLabel("Chemin: ")
         label_path.setStyleSheet("color: #d6d6d6; font-weight: 600;")
         lab_path_h = QHBoxLayout()
         lab_path_h.setContentsMargins(0, 0, 0, 0)
@@ -157,7 +152,7 @@ class MainPage(QWidget):
         self.path_lbl = QLabel(abs_path)
         self.path_lbl.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.path_lbl.setStyleSheet(badge_style + " font-family: 'Consolas', 'Courier New', monospace;")
-        self.path_lbl.setMinimumWidth(420)
+        self.path_lbl.setMinimumHeight(70)
         self.path_lbl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
         form.addRow(lab_path_w, self.path_lbl)
@@ -226,12 +221,6 @@ class MainPage(QWidget):
         self.attract.setText(self.cfg.get("attract_shortcut", ""))
         self.repel.setText(self.cfg.get("repel_shortcut", ""))
         self.toggle.setText(self.cfg.get("toggle_shortcut", ""))
-        delay = self.cfg.get("delay_seconds", "")
-        try:
-            delay_str = f"{float(delay):.1f}"
-        except Exception:
-            delay_str = str(delay)
-        self.delay_lbl.setText(f"{delay_str} secondes")
         raw_path = (self.cfg.get("storage_path") or "").strip()
         if raw_path:
             try:
@@ -268,15 +257,51 @@ class MainPage(QWidget):
             except Exception as e:
                 QMessageBox.warning(self, "Erreur", f"Impossible de créer le dossier: {e}")
                 return
-            out = str(p / "generated_script.txt")
+            out = str(p / "dragoturkey_script.akh")
 
         try:
             with open(out, "w", encoding="utf-8") as f:
-                f.write(f"Attract: {a}\n")
-                f.write(f"Repel: {r}\n")
-                f.write(f"Toggle: {t}\n")
-                f.write(f"Delay: {cfg.get('delay_seconds')}\n")
-                f.write(f"Storage path: {path or out}\n")
+                f.write("Toast(Message, Duration := 2000) {\n")
+                f.write("    myGui := Gui(\"+AlwaysOnTop +ToolWindow -Caption\")\n")
+                f.write('    myGui.BackColor := "000000"\n')
+                f.write('    myGui.SetFont("s16 cWhite", "Arial")\n')
+                f.write('    myGui.Add("Text", , Message)\n')
+                f.write("    x := A_ScreenWidth - 300\n")
+                f.write('    myGui.Show("x" x " y20 w280 h50 NoActivate")\n')
+                f.write("    SetTimer () => myGui.Destroy(), -Duration\n")
+                f.write("}\n")
+                f.write("\n")
+                f.write('Toast("Script lancé", 2000)\n')
+                f.write("\n")
+                f.write("toggle := false\n")
+                f.write("\n")
+                f.write(f"{t}::\n")
+                f.write("{\n")
+                f.write("    global toggle\n")
+                f.write("    toggle := !toggle\n")
+                f.write("    if (toggle) {\n")
+                f.write('        Toast("Macro activée", 2000)\n')
+                f.write("        SetTimer MyLoop, 100\n")
+                f.write("    } else {\n")
+                f.write('        Toast("Macro désactivée", 2000)\n')
+                f.write("        SetTimer MyLoop, 0\n")
+                f.write("    }\n")
+                f.write("}\n")
+                f.write("\n")
+                f.write("^F11::\n")
+                f.write("{\n")
+                f.write('    Toast("Script arrêté", 2000)\n')
+                f.write("    Sleep 2000\n")
+                f.write("    ExitApp\n")
+                f.write("}\n")
+                f.write("\n")
+                f.write("MyLoop() {\n")
+                f.write(f'    Send "{r}"\n')
+                f.write("    Sleep 3500\n")
+                f.write(f'    Send "{a}"\n')
+                f.write("    Sleep 3500\n")
+                f.write("}\n")
+
             # show a dialog with OK and "Ouvrir le dossier" options
             dlg = QMessageBox(self)
             dlg.setWindowTitle("Génération terminée")
@@ -307,8 +332,7 @@ class MainPage(QWidget):
             QMessageBox.warning(self, "Erreur", f"Échec de l'écriture du fichier: {e}")
 
 class InfoDialog(QDialog):
-    """Simple information dialog with lorem ipsum and a Close button."""
-
+    
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Information")
@@ -322,9 +346,11 @@ class InfoDialog(QDialog):
         txt.setReadOnly(True)
         txt.setOpenExternalLinks(True)
         txt.setHtml(
-            "<p>1) Download and install AutoHotkey from <a href=\"https://www.autohotkey.com\">https://www.autohotkey.com</a></p>"
+            "<p>1) Download and install AutoHotkey from <a href=\"https://www.autohotkey.com\">https://www.autohotkey.com.</a></p>"
             "<p>2) Launch the generated script by double-clicking it. An AutoHotkey icon should appear in your system tray.</p>"
-            "<p>3) Enjoy !</p>"
+            "<p>3) Use the shortcut you configured to start/stop the script.</p>"
+            "<p>4) To totally shut down the script, use the shortcut \"Ctrl + F11\".</p>"
+            "<p>5) Enjoy !</p>"
         )
         layout.addWidget(txt)
 

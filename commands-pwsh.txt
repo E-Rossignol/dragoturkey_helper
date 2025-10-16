@@ -1,0 +1,5 @@
+Set-Location "C:\Users\erwan\OneDrive\Bureau\desktop_software_test"
+python -m pip install --user pyinstaller
+python -m PyInstaller --onefile --windowed --name 'DragoTurkey' --icon 'ressources\dd_icon.ico' --add-data 'ressources;ressources' --add-data 'config.json;.' main.py
+# Run:
+& .\dist\DragoTurkey.exe
