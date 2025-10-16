@@ -78,6 +78,19 @@ def main():
         window.move(100, 100)
     except Exception:
         pass
+    # position: top of the screen (available geometry) and horizontally centered
+    try:
+        screen_geom = QApplication.desktop().availableGeometry(window)
+        x = screen_geom.x() + (screen_geom.width() - window.width()) // 2
+        y = screen_geom.y()  # top of available area (avoids taskbar)
+        window.move(x, y)
+    except Exception:
+        # fallback to previous behavior if anything fails
+        try:
+            screen_center = QApplication.desktop().screen().rect().center()
+            window.move(screen_center - window.rect().center())
+        except Exception:
+            pass
     window.navigate_to(start_page)
 
     sys.exit(app.exec_())

@@ -18,9 +18,8 @@ from PyQt5.QtWidgets import (
     QDialog,
     QTextBrowser,
 )
-from PyQt5.QtGui import QFont
+from PyQt5.QtGui import QFont, QPixmap, QIcon
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap
 
 from config import load_config
 
@@ -36,6 +35,12 @@ class MainPage(QWidget):
         super().__init__()
         self.navigate_to = navigate_to
         self.cfg = load_config()
+
+        # set application and window icon from ressources/fart.png (if available)
+        icon_path = Path(__file__).resolve().parent.parent / "ressources" / "dd_icon.ico"
+        if icon_path.exists():
+            QApplication.setWindowIcon(QIcon(str(icon_path)))
+            self.setWindowIcon(QIcon(str(icon_path)))
 
         root_layout = QVBoxLayout()
 
@@ -327,8 +332,7 @@ class MainPage(QWidget):
             QMessageBox.warning(self, "Erreur", f"Échec de l'écriture du fichier: {e}")
 
 class InfoDialog(QDialog):
-    """Simple information dialog with lorem ipsum and a Close button."""
-
+    
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Information")
@@ -342,9 +346,11 @@ class InfoDialog(QDialog):
         txt.setReadOnly(True)
         txt.setOpenExternalLinks(True)
         txt.setHtml(
-            "<p>1) Download and install AutoHotkey from <a href=\"https://www.autohotkey.com\">https://www.autohotkey.com</a></p>"
+            "<p>1) Download and install AutoHotkey from <a href=\"https://www.autohotkey.com\">https://www.autohotkey.com.</a></p>"
             "<p>2) Launch the generated script by double-clicking it. An AutoHotkey icon should appear in your system tray.</p>"
-            "<p>3) Enjoy !</p>"
+            "<p>3) Use the shortcut you configured to start/stop the script.</p>"
+            "<p>4) To totally shut down the script, use the shortcut \"Ctrl + F11\".</p>"
+            "<p>5) Enjoy !</p>"
         )
         layout.addWidget(txt)
 
