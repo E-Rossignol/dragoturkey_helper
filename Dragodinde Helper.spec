@@ -5,7 +5,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('ressources', 'ressources'), ('app_config.json', '.')],
+    datas=[('ressources', 'ressources'), ('app_config.json', '.'), ('dark_theme.qss', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

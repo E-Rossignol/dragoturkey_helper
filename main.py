@@ -28,7 +28,7 @@ class App(QStackedWidget):
         self.addWidget(self.regen)     # index 4
         self.addWidget(self.mainpage)  # index 5
 
-        self.setWindowTitle("Dofus Emotes Script Generator")
+        self.setWindowTitle("Dragodinde Helper")
         self.setFixedSize(900, 900)
         # pages created
 
