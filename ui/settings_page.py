@@ -1,5 +1,3 @@
-"""Settings page for shortcut capture and script generation."""
-
 from pathlib import Path
 
 from PyQt5.QtWidgets import (
@@ -21,8 +19,6 @@ from config import load_config, save_config, set_first_run
 
 
 class KeySequenceEdit(QLineEdit):
-    """Capture a key combination and render it as a readable shortcut."""
-
     def __init__(self, parent=None):
         super().__init__(parent)
         self._sequence = ""
@@ -39,6 +35,7 @@ class KeySequenceEdit(QLineEdit):
 
     def focusOutEvent(self, ev):
         if self._recording:
+            # Cancelled recordings restore the previous value instead of leaving the field blank.
             self._recording = False
             self.setText(self._prev_display)
             self.setStyleSheet("")
@@ -62,6 +59,7 @@ class KeySequenceEdit(QLineEdit):
 
         if key == Qt.Key_Escape:
             if self._recording:
+                # Esc aborts capture and clears the temporary recording state.
                 self._recording = False
                 self.setText(self._prev_display)
                 self.setStyleSheet("")
@@ -119,8 +117,6 @@ class KeySequenceEdit(QLineEdit):
 
 
 class SettingsPage(QWidget):
-    """Configure attract, repel, and toggle shortcuts plus the output path."""
-
     def __init__(self, navigate_to):
         super().__init__()
         self.navigate_to = navigate_to
@@ -311,6 +307,7 @@ class SettingsPage(QWidget):
     def _generate(self):
         a = self.attract_input.sequence() or self.attract_input.text().strip()
         r = self.repel_input.sequence() or self.repel_input.text().strip()
+        # Use the currently recorded shortcut values so the generated file always matches the UI state.
         if not a or not r:
             QMessageBox.warning(self, "Validation", "Les deux raccourcis doivent être définis.")
             return
@@ -363,8 +360,6 @@ class SettingsPage(QWidget):
 
 
 class RegeneratePage(QWidget):
-    """Regenerate the script from the stored configuration."""
-
     def __init__(self, navigate_to):
         super().__init__()
         self.navigate_to = navigate_to

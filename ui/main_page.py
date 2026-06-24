@@ -25,12 +25,6 @@ from config import load_config
 
 
 class MainPage(QWidget):
-    """Main page that displays chosen parameters in a nicer, readable layout.
-
-    Shows attract/repel shortcuts, the delay (formatted), and the absolute
-    storage path (read-only field with a copy button).
-    """
-
     def __init__(self, navigate_to):
         super().__init__()
         self.navigate_to = navigate_to
@@ -192,7 +186,6 @@ class MainPage(QWidget):
         self.info_btn.clicked.connect(lambda: InfoDialog(self).exec_())
 
     def refresh(self):
-        """Reload config and update displayed values."""
         self.cfg = load_config()
         self.attract.setText(self.cfg.get("attract_shortcut", ""))
         self.repel.setText(self.cfg.get("repel_shortcut", ""))
@@ -209,7 +202,6 @@ class MainPage(QWidget):
         self._abs_path = abs_path
 
     def _generate(self):
-        """Generate the script file using saved config (or ask for a path)."""
         cfg = load_config()
         a = cfg.get("attract_shortcut") or ""
         r = cfg.get("repel_shortcut") or ""

@@ -3,10 +3,7 @@ from config import is_first_run
 
 
 class MainMenu(QWidget):
-    """Main menu with navigation buttons to the two pages."""
-
     def __init__(self, navigate_to):
-        """navigate_to: callable(page_name: str) -> None"""
         super().__init__()
         self.navigate_to = navigate_to
         layout = QVBoxLayout()

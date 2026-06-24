@@ -73,6 +73,13 @@ Use these helpers for reproducible unit tests or when extending the text utility
 - `ressources/` — icons and images used by the interface.
 - `tests/test_text_utils.py` — unit tests for the core string helpers.
 
+## How It Works
+1. The app loads `app_config.json` and checks whether this is the first run.
+2. On first launch, the settings page captures the attract, repel and toggle shortcuts.
+3. The main dashboard shows the saved values and can generate an AutoHotkey script into the configured folder.
+4. The text utility pages demonstrate the reusable helper functions used by the tests.
+5. The PyInstaller commands in `build_py.py` and `commands-pwsh.txt` package the app for Windows distribution.
+
 ## What this project demonstrates
 This section is targeted to quickly show the concrete technical skills and practices you can evaluate when reviewing the repository:
 
