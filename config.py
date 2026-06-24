@@ -9,7 +9,7 @@ DEFAULT_CONFIG = {
     "attract_shortcut": "",
     "repel_shortcut": "",
     "delay_seconds": 4.0,
-    "storage_path": ""
+    "storage_path": "",
 }
 
 
@@ -26,7 +26,9 @@ def load_config() -> dict:
 def save_config(cfg: dict) -> None:
     data = DEFAULT_CONFIG.copy()
     data.update(cfg or {})
-    CONFIG_FILE.write_text(json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8")
+    CONFIG_FILE.write_text(
+        json.dumps(data, indent=2, ensure_ascii=False), encoding="utf-8"
+    )
 
 
 def is_first_run() -> bool:

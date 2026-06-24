@@ -7,7 +7,6 @@ from PyQt5.QtWidgets import (
     QLabel,
     QPushButton,
     QFormLayout,
-    QLineEdit,
     QHBoxLayout,
     QApplication,
     QFrame,
@@ -30,7 +29,9 @@ class MainPage(QWidget):
         self.navigate_to = navigate_to
         self.cfg = load_config()
 
-        icon_path = Path(__file__).resolve().parent.parent / "ressources" / "dd_icon.ico"
+        icon_path = (
+            Path(__file__).resolve().parent.parent / "ressources" / "dd_icon.ico"
+        )
         if icon_path.exists():
             QApplication.setWindowIcon(QIcon(str(icon_path)))
             self.setWindowIcon(QIcon(str(icon_path)))
@@ -47,7 +48,9 @@ class MainPage(QWidget):
         center_frame = QFrame()
         center_frame.setFrameShape(QFrame.StyledPanel)
         center_frame.setMaximumWidth(700)
-        center_frame.setStyleSheet("background: #1f2326; border-radius: 8px; padding: 18px;")
+        center_frame.setStyleSheet(
+            "background: #1f2326; border-radius: 8px; padding: 18px;"
+        )
         center_layout = QVBoxLayout()
         center_layout.setSpacing(12)
         center_frame.setLayout(center_layout)
@@ -67,7 +70,9 @@ class MainPage(QWidget):
         kiss_pix = QPixmap(str(kiss_path))
         kiss_lbl = QLabel()
         if not kiss_pix.isNull():
-            kiss_lbl.setPixmap(kiss_pix.scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            kiss_lbl.setPixmap(
+                kiss_pix.scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            )
         label_att = QLabel("Attirer:")
         label_att.setStyleSheet("color: #d6d6d6; font-weight: 600;")
         lab_att_h = QHBoxLayout()
@@ -86,7 +91,9 @@ class MainPage(QWidget):
         fart_pix = QPixmap(str(fart_path))
         fart_lbl = QLabel()
         if not fart_pix.isNull():
-            fart_lbl.setPixmap(fart_pix.scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            fart_lbl.setPixmap(
+                fart_pix.scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            )
         label_rep = QLabel("Éloigner:")
         label_rep.setStyleSheet("color: #d6d6d6; font-weight: 600;")
         lab_rep_h = QHBoxLayout()
@@ -133,7 +140,9 @@ class MainPage(QWidget):
 
         self.path_lbl = QLabel(abs_path)
         self.path_lbl.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        self.path_lbl.setStyleSheet(badge_style + " font-family: 'Consolas', 'Courier New', monospace;")
+        self.path_lbl.setStyleSheet(
+            badge_style + " font-family: 'Consolas', 'Courier New', monospace;"
+        )
         self.path_lbl.setMinimumHeight(70)
         self.path_lbl.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
 
@@ -207,12 +216,18 @@ class MainPage(QWidget):
         r = cfg.get("repel_shortcut") or ""
         t = cfg.get("toggle_shortcut") or ""
         if not a or not r or not t:
-            QMessageBox.warning(self, "Validation", "Les trois raccourcis doivent être définis dans les paramètres.")
+            QMessageBox.warning(
+                self,
+                "Validation",
+                "Les trois raccourcis doivent être définis dans les paramètres.",
+            )
             return
         path = cfg.get("storage_path") or ""
         if not path:
             dlg = QFileDialog()
-            fp, _ = dlg.getSaveFileName(self, "Enregistrer le script", "script.txt", "Text Files (*.txt)")
+            fp, _ = dlg.getSaveFileName(
+                self, "Enregistrer le script", "script.txt", "Text Files (*.txt)"
+            )
             if not fp:
                 return
             out = fp
@@ -221,14 +236,16 @@ class MainPage(QWidget):
             try:
                 p.mkdir(parents=True, exist_ok=True)
             except Exception as e:
-                QMessageBox.warning(self, "Erreur", f"Impossible de créer le dossier: {e}")
+                QMessageBox.warning(
+                    self, "Erreur", f"Impossible de créer le dossier: {e}"
+                )
                 return
             out = str(p / "dragoturkey_script.akh")
 
         try:
             with open(out, "w", encoding="utf-8") as f:
                 f.write("Toast(Message, Duration := 2000) {\n")
-                f.write("    myGui := Gui(\"+AlwaysOnTop +ToolWindow -Caption\")\n")
+                f.write('    myGui := Gui("+AlwaysOnTop +ToolWindow -Caption")\n')
                 f.write('    myGui.BackColor := "000000"\n')
                 f.write('    myGui.SetFont("s16 cWhite", "Arial")\n')
                 f.write('    myGui.Add("Text", , Message)\n')
@@ -289,12 +306,15 @@ class MainPage(QWidget):
                         else:
                             subprocess.run(["open", folder])
                     except Exception:
-                        QMessageBox.warning(self, "Erreur", "Impossible d'ouvrir le dossier.")
+                        QMessageBox.warning(
+                            self, "Erreur", "Impossible d'ouvrir le dossier."
+                        )
         except Exception as e:
             QMessageBox.warning(self, "Erreur", f"Échec de l'écriture du fichier: {e}")
 
+
 class InfoDialog(QDialog):
-    
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Information")
@@ -307,10 +327,10 @@ class InfoDialog(QDialog):
         txt.setReadOnly(True)
         txt.setOpenExternalLinks(True)
         txt.setHtml(
-            "<p>1) Download and install AutoHotkey from <a href=\"https://www.autohotkey.com\">https://www.autohotkey.com.</a></p>"
+            '<p>1) Download and install AutoHotkey from <a href="https://www.autohotkey.com">https://www.autohotkey.com.</a></p>'
             "<p>2) Launch the generated script by double-clicking it. An AutoHotkey icon should appear in your system tray.</p>"
             "<p>3) Use the shortcut you configured to start/stop the script.</p>"
-            "<p>4) To totally shut down the script, use the shortcut \"Ctrl + F11\".</p>"
+            '<p>4) To totally shut down the script, use the shortcut "Ctrl + F11".</p>'
             "<p>5) Enjoy !</p>"
         )
         layout.addWidget(txt)

@@ -21,4 +21,3 @@ class MainMenu(QWidget):
             self.btn_edit.clicked.connect(lambda: self.navigate_to("settings"))
         layout.addStretch()
         self.setLayout(layout)
-        

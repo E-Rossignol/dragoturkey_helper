@@ -31,7 +31,9 @@ class KeySequenceEdit(QLineEdit):
         self._prev_display = self.text()
         self._recording = True
         self.setText("")
-        self.setStyleSheet("background-color: #2b2f33; color: #ffffff; border: 1px solid #4a90e2;")
+        self.setStyleSheet(
+            "background-color: #2b2f33; color: #ffffff; border: 1px solid #4a90e2;"
+        )
 
     def focusOutEvent(self, ev):
         if self._recording:
@@ -128,7 +130,9 @@ class SettingsPage(QWidget):
         kiss_pix = QPixmap(str(kiss_path))
         kiss_lbl = QLabel()
         if not kiss_pix.isNull():
-            kiss_lbl.setPixmap(kiss_pix.scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            kiss_lbl.setPixmap(
+                kiss_pix.scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            )
         label_att = QLabel("Attirer la monture:")
         label_att.setStyleSheet("font-weight: 600; color: #d6d6d6;")
         lab_att_h = QHBoxLayout()
@@ -156,7 +160,9 @@ class SettingsPage(QWidget):
         fart_pix = QPixmap(str(fart_path))
         fart_lbl = QLabel()
         if not fart_pix.isNull():
-            fart_lbl.setPixmap(fart_pix.scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation))
+            fart_lbl.setPixmap(
+                fart_pix.scaled(40, 40, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            )
         label_rep = QLabel("Eloigner la monture:")
         label_rep.setStyleSheet("font-weight: 600; color: #d6d6d6;")
         lab_rep_h = QHBoxLayout()
@@ -282,10 +288,14 @@ class SettingsPage(QWidget):
         r = self.repel_input.sequence() or self.repel_input.text().strip()
         t = self.toggle_input.sequence() or self.toggle_input.text().strip()
         if not a or not r or not t:
-            QMessageBox.warning(self, "Validation", "Tous les raccourcis doivent être définis.")
+            QMessageBox.warning(
+                self, "Validation", "Tous les raccourcis doivent être définis."
+            )
             return
         if a == r or a == t or r == t:
-            QMessageBox.warning(self, "Validation", "Tous les raccourcis doivent être différents.")
+            QMessageBox.warning(
+                self, "Validation", "Tous les raccourcis doivent être différents."
+            )
             return
         self.cfg["attract_shortcut"] = a
         self.cfg["repel_shortcut"] = r
@@ -309,17 +319,23 @@ class SettingsPage(QWidget):
         r = self.repel_input.sequence() or self.repel_input.text().strip()
         # Use the currently recorded shortcut values so the generated file always matches the UI state.
         if not a or not r:
-            QMessageBox.warning(self, "Validation", "Les deux raccourcis doivent être définis.")
+            QMessageBox.warning(
+                self, "Validation", "Les deux raccourcis doivent être définis."
+            )
             return
         if a == r:
-            QMessageBox.warning(self, "Validation", "Les deux raccourcis doivent être différents.")
+            QMessageBox.warning(
+                self, "Validation", "Les deux raccourcis doivent être différents."
+            )
             return
 
         storage = self.storage_input.text().strip()
 
         if not storage:
             dlg = QFileDialog()
-            fp, _ = dlg.getSaveFileName(self, "Enregistrer le script", "script.txt", "Text Files (*.txt)")
+            fp, _ = dlg.getSaveFileName(
+                self, "Enregistrer le script", "script.txt", "Text Files (*.txt)"
+            )
             if not fp:
                 return
             out = fp
@@ -328,7 +344,9 @@ class SettingsPage(QWidget):
             try:
                 p.mkdir(parents=True, exist_ok=True)
             except Exception as e:
-                QMessageBox.warning(self, "Erreur", f"Impossible de créer le dossier: {e}")
+                QMessageBox.warning(
+                    self, "Erreur", f"Impossible de créer le dossier: {e}"
+                )
                 return
             out = str(p / "generated_script.txt")
 
@@ -346,12 +364,16 @@ class SettingsPage(QWidget):
         r = self.repel_input.sequence() or self.repel_input.text().strip()
         t = self.toggle_input.sequence() or self.toggle_input.text().strip()
         if not a or not r or not t:
-            self.validation_label.setText("Tous les raccourcis doivent être renseignés.")
+            self.validation_label.setText(
+                "Tous les raccourcis doivent être renseignés."
+            )
             self.validation_label.setVisible(True)
             self.save_btn.setEnabled(False)
             return
         if a == r or a == t or r == t:
-            self.validation_label.setText("Les raccourcis ne peuvent pas être identiques.")
+            self.validation_label.setText(
+                "Les raccourcis ne peuvent pas être identiques."
+            )
             self.validation_label.setVisible(True)
             self.save_btn.setEnabled(False)
             return
@@ -365,7 +387,9 @@ class RegeneratePage(QWidget):
         self.navigate_to = navigate_to
         self.cfg = load_config()
         layout = QVBoxLayout()
-        layout.addWidget(QLabel("Regénérer le script à partir des paramètres enregistrés."))
+        layout.addWidget(
+            QLabel("Regénérer le script à partir des paramètres enregistrés.")
+        )
         self.gen_btn = QPushButton("Générer maintenant")
         self.back = QPushButton("Retour menu")
         layout.addWidget(self.gen_btn)
@@ -379,7 +403,9 @@ class RegeneratePage(QWidget):
         path = self.cfg.get("storage_path") or ""
         if not path:
             dlg = QFileDialog()
-            fp, _ = dlg.getSaveFileName(self, "Enregistrer le script", "script.txt", "Text Files (*.txt)")
+            fp, _ = dlg.getSaveFileName(
+                self, "Enregistrer le script", "script.txt", "Text Files (*.txt)"
+            )
             if not fp:
                 return
             out = fp
