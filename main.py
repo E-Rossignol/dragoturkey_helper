@@ -13,24 +13,21 @@ from config import is_first_run
 class App(QStackedWidget):
     def __init__(self):
         super().__init__()
-        # create pages
         self.menu = MainMenu(self.navigate_to)
         self.reverse = ReverseTextPage(self.navigate_to)
         self.swapcase = SwapCasePage(self.navigate_to)
         self.settings = SettingsPage(self.navigate_to)
         self.regen = RegeneratePage(self.navigate_to)
         self.mainpage = MainPage(self.navigate_to)
-        # add pages (index order)
-        self.addWidget(self.menu)      # index 0
-        self.addWidget(self.reverse)   # index 1
-        self.addWidget(self.swapcase)  # index 2
-        self.addWidget(self.settings)  # index 3
-        self.addWidget(self.regen)     # index 4
-        self.addWidget(self.mainpage)  # index 5
+        self.addWidget(self.menu)
+        self.addWidget(self.reverse)
+        self.addWidget(self.swapcase)
+        self.addWidget(self.settings)
+        self.addWidget(self.regen)
+        self.addWidget(self.mainpage)
 
         self.setWindowTitle("Dragodinde Helper")
         self.setFixedSize(900, 900)
-        # pages created
 
     def navigate_to(self, page_name: str):
         mapping = {
@@ -42,7 +39,6 @@ class App(QStackedWidget):
             "main": 5,
         }
         idx = mapping.get(page_name, 0)
-        # if navigating to main page, refresh its displayed values first
         if page_name == "main":
             try:
                 self.mainpage.refresh()
@@ -54,9 +50,6 @@ class App(QStackedWidget):
 def main():
     app = QApplication(sys.argv)
 
-    # apply QSS theme if available
-    qss_path = Path(__file__).with_name("..") / "dark_theme.qss"
-    # resolve relative path correctly
     qss_file = Path(__file__).resolve().parent / "dark_theme.qss"
     if qss_file.exists():
         with open(qss_file, "r", encoding="utf-8") as f:
@@ -64,8 +57,6 @@ def main():
 
     window = App()
 
-    # Directly create and show main window (no splash)
-    # if it's the first run, start on settings; otherwise show the main summary page
     start_page = "settings" if is_first_run() else "main"
     window.show()
     try:
@@ -78,14 +69,12 @@ def main():
         window.move(100, 100)
     except Exception:
         pass
-    # position: top of the screen (available geometry) and horizontally centered
     try:
         screen_geom = QApplication.desktop().availableGeometry(window)
         x = screen_geom.x() + (screen_geom.width() - window.width()) // 2
-        y = screen_geom.y()  # top of available area (avoids taskbar)
+        y = screen_geom.y()
         window.move(x, y)
     except Exception:
-        # fallback to previous behavior if anything fails
         try:
             screen_center = QApplication.desktop().screen().rect().center()
             window.move(screen_center - window.rect().center())

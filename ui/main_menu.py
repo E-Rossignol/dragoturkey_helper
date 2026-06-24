@@ -11,9 +11,7 @@ class MainMenu(QWidget):
         self.navigate_to = navigate_to
         layout = QVBoxLayout()
 
-        # default menu: different if first run or not
         if is_first_run():
-            # on first run, provide direct access to settings
             self.btn_edit = QPushButton("Modifier paramètres")
             layout.addWidget(self.btn_edit)
             self.btn_edit.clicked.connect(lambda: self.navigate_to("settings"))

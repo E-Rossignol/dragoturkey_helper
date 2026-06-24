@@ -22,7 +22,6 @@ class SplashScreen(QWidget):
         v.addStretch()
         self.setLayout(v)
 
-        # animation: update dots every 350ms
         self._dots = 0
         self._timer = QTimer(self)
         self._timer.timeout.connect(self._tick)

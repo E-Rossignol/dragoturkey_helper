@@ -1,5 +1,3 @@
-# -*- mode: python ; coding: utf-8 -*-
-
 block_cipher = None
 
 a = Analysis(
@@ -40,5 +38,4 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    # icon='ressources/icon.ico',  # Uncomment if you have an icon
 )

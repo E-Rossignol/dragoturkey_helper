@@ -36,7 +36,6 @@ class MainPage(QWidget):
         self.navigate_to = navigate_to
         self.cfg = load_config()
 
-        # set application and window icon from ressources/fart.png (if available)
         icon_path = Path(__file__).resolve().parent.parent / "ressources" / "dd_icon.ico"
         if icon_path.exists():
             QApplication.setWindowIcon(QIcon(str(icon_path)))
@@ -44,7 +43,6 @@ class MainPage(QWidget):
 
         root_layout = QVBoxLayout()
 
-        # Centered framed container for nicer layout
         hdr = QLabel("Paramètres enregistrés")
         hdr_font = QFont()
         hdr_font.setPointSize(16)
@@ -52,7 +50,6 @@ class MainPage(QWidget):
         hdr.setFont(hdr_font)
         hdr.setAlignment(Qt.AlignCenter)
 
-        # center frame
         center_frame = QFrame()
         center_frame.setFrameShape(QFrame.StyledPanel)
         center_frame.setMaximumWidth(700)
@@ -61,22 +58,17 @@ class MainPage(QWidget):
         center_layout.setSpacing(12)
         center_frame.setLayout(center_layout)
 
-        # header inside center
         center_layout.addWidget(hdr, alignment=Qt.AlignHCenter)
-        # add stretch so the header, form, actions and back button are evenly distributed
         center_layout.addStretch()
 
-        # form-like compact display
         form = QFormLayout()
         form.setLabelAlignment(Qt.AlignLeft)
         form.setFormAlignment(Qt.AlignCenter)
 
-        # styled badge labels for shortcuts
         badge_style = (
             "background: #2d6cdf; color: white; padding: 6px 10px; border-radius: 6px;"
             "font-weight: 600;"
         )
-        # Attirer label with icon (icon immediately before the label text)
         kiss_path = Path(__file__).resolve().parent.parent / "ressources" / "kiss.png"
         kiss_pix = QPixmap(str(kiss_path))
         kiss_lbl = QLabel()
@@ -96,7 +88,6 @@ class MainPage(QWidget):
         self.attract.setStyleSheet(badge_style)
         form.addRow(lab_att_w, self.attract)
 
-        # Éloigner label with icon (icon immediately before the label text)
         fart_path = Path(__file__).resolve().parent.parent / "ressources" / "fart.png"
         fart_pix = QPixmap(str(fart_path))
         fart_lbl = QLabel()
@@ -129,7 +120,6 @@ class MainPage(QWidget):
         self.toggle.setStyleSheet(badge_style)
         form.addRow(lab_tog_w, self.toggle)
 
-        # Storage path (absolute) with icon button
         raw_path = (self.cfg.get("storage_path") or "").strip()
         if raw_path:
             try:
@@ -139,7 +129,6 @@ class MainPage(QWidget):
         else:
             abs_path = "(non défini)"
 
-        # Présentation du label de gauche similaire à l'entrée Start/Stop
         label_path = QLabel("Chemin: ")
         label_path.setStyleSheet("color: #d6d6d6; font-weight: 600;")
         lab_path_h = QHBoxLayout()
@@ -148,7 +137,6 @@ class MainPage(QWidget):
         lab_path_w = QWidget()
         lab_path_w.setLayout(lab_path_h)
 
-        # valeur affichée en mode "badge" (sélectionnable) pour ressembler à Start/Stop
         self.path_lbl = QLabel(abs_path)
         self.path_lbl.setTextInteractionFlags(Qt.TextSelectableByMouse)
         self.path_lbl.setStyleSheet(badge_style + " font-family: 'Consolas', 'Courier New', monospace;")
@@ -157,27 +145,20 @@ class MainPage(QWidget):
 
         form.addRow(lab_path_w, self.path_lbl)
 
-        # expose current absolute path string for refresh/copy
         self._abs_path = abs_path
 
         center_layout.addLayout(form)
 
-        # add stretch so the form and action area are spaced evenly
         center_layout.addStretch()
 
-        # Info button + generate button row (centered)
         actions_h = QHBoxLayout()
-        # make the buttons sit close together
         actions_h.setSpacing(6)
 
-        # info button (larger circular 'i', placed close to generate)
         self.info_btn = QPushButton("?")
         self.info_btn.setFixedSize(60, 60)
-        # slightly larger font and tighter padding to appear closer
         self.info_btn.setStyleSheet(
             "background: #2b2d31; color: #d6d6d6; border-radius: 20px; font-size: 24px;"
         )
-        # remove extra spacing around the button to move it closer to the generate button
         info_container = QWidget()
         info_layout = QHBoxLayout()
         info_layout.setContentsMargins(0, 0, 0, 0)
@@ -189,19 +170,16 @@ class MainPage(QWidget):
         self.generate_btn.setFixedWidth(220)
         actions_h.addWidget(self.generate_btn)
 
-        # center the whole action row by placing the layout inside a container
         actions_container = QWidget()
         actions_container.setLayout(actions_h)
         center_layout.addWidget(actions_container, alignment=Qt.AlignHCenter)
 
-        # further distribute vertical space before the back button
         center_layout.addStretch()
 
         self.back = QPushButton("Modifier les paramètres")
         self.back.setFixedWidth(300)
         center_layout.addWidget(self.back, alignment=Qt.AlignHCenter)
 
-        # assemble root layout: top spacer, centered frame, bottom spacer
         root_layout.addItem(QSpacerItem(20, 40))
         root_layout.addWidget(center_frame, alignment=Qt.AlignHCenter)
         root_layout.addItem(QSpacerItem(20, 40))
@@ -210,9 +188,7 @@ class MainPage(QWidget):
 
         self.back.clicked.connect(lambda: self.navigate_to("settings"))
 
-        # connect generate action
         self.generate_btn.clicked.connect(self._generate)
-        # connect info action
         self.info_btn.clicked.connect(lambda: InfoDialog(self).exec_())
 
     def refresh(self):
@@ -229,7 +205,6 @@ class MainPage(QWidget):
                 abs_path = raw_path
         else:
             abs_path = "(non défini)"
-        # update the badge-like label showing the absolute path
         self.path_lbl.setText(abs_path)
         self._abs_path = abs_path
 
@@ -244,7 +219,6 @@ class MainPage(QWidget):
             return
         path = cfg.get("storage_path") or ""
         if not path:
-            # ask user where to save
             dlg = QFileDialog()
             fp, _ = dlg.getSaveFileName(self, "Enregistrer le script", "script.txt", "Text Files (*.txt)")
             if not fp:
@@ -302,7 +276,6 @@ class MainPage(QWidget):
                 f.write("    Sleep 3500\n")
                 f.write("}\n")
 
-            # show a dialog with OK and "Ouvrir le dossier" options
             dlg = QMessageBox(self)
             dlg.setWindowTitle("Génération terminée")
             dlg.setText(f"Fichier créé: {out}")
@@ -312,14 +285,11 @@ class MainPage(QWidget):
             dlg.exec_()
             clicked = dlg.clickedButton()
             if clicked == open_btn:
-                # open the folder containing the generated file
                 folder = os.path.dirname(out)
                 try:
-                    # Windows: os.startfile; other OSs could use xdg-open / open
                     os.startfile(folder)
                 except Exception:
                     try:
-                        # fallback for other platforms
                         import subprocess
 
                         if os.name == "posix":
@@ -341,7 +311,6 @@ class InfoDialog(QDialog):
 
         layout = QVBoxLayout()
 
-        # Use a QTextBrowser so links can be clicked and opened externally
         txt = QTextBrowser()
         txt.setReadOnly(True)
         txt.setOpenExternalLinks(True)
@@ -357,7 +326,6 @@ class InfoDialog(QDialog):
         btn = QPushButton("Close")
         btn.clicked.connect(self.accept)
         btn.setFixedWidth(120)
-        # right-align the close button
         btn_h = QHBoxLayout()
         btn_h.addStretch()
         btn_h.addWidget(btn)
