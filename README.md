@@ -18,9 +18,9 @@ A lightweight, polished PyQt5 desktop application for Dragodinde / AutoHotkey us
 - Pytest coverage for the pure helper functions in `text_utils.py`.
 
 ## Demonstration
-@TODO: SCREENSHOTS of the settings page, main dashboard, script generation flow and the text utility pages showcasing the UI and features.
+Screenshots of the settings page, main dashboard, script generation flow and the text utility pages showcasing the UI and features are available in the "deliverables/screenshots/" folder
 
-You can also find a demo video here: @TODO.
+You can also find a demo video here: https://youtu.be/IIXKy5yo_lg
 
 ## Tech Stack
 - Python 3
