@@ -3,8 +3,6 @@ from text_utils import swap_case
 
 
 class SwapCasePage(QWidget):
-    """Page that swaps case of entered text."""
-
     def __init__(self, navigate_to):
         super().__init__()
         self.navigate_to = navigate_to

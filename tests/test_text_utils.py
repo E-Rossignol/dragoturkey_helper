@@ -1,5 +1,3 @@
-import pytest
-
 from text_utils import reverse_text, swap_case
 
 

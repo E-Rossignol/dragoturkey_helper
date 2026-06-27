@@ -3,8 +3,6 @@ from text_utils import reverse_text
 
 
 class ReverseTextPage(QWidget):
-    """Page that reverses the entered text."""
-
     def __init__(self, navigate_to):
         super().__init__()
         self.navigate_to = navigate_to

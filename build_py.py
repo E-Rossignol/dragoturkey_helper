@@ -5,6 +5,6 @@ PyInstaller.__main__.run([
     '--name=DragoTurkey',
     '--icon=ressources\\dd_icon.ico',
     '--add-data', 'ressources;ressources',
-    '--add-data', 'config.json;.',
+    '--add-data', 'app_config.json;.',
     'main.py',
 ])

@@ -3,8 +3,6 @@ from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout
 
 
 class SplashScreen(QWidget):
-    """Simple splash screen with animated dots."""
-
     def __init__(self, parent=None, duration_ms=1800):
         super().__init__(parent, flags=Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -22,7 +20,6 @@ class SplashScreen(QWidget):
         v.addStretch()
         self.setLayout(v)
 
-        # animation: update dots every 350ms
         self._dots = 0
         self._timer = QTimer(self)
         self._timer.timeout.connect(self._tick)

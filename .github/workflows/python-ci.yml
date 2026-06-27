@@ -1,0 +1,35 @@
+name: Python CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  app-lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install --user -r requirements.txt black ruff
+
+      - name: Check formatting
+        run: |
+          black --check main.py config.py text_utils.py ui tests
+
+      - name: Check code quality
+        run: |
+          ruff check main.py config.py text_utils.py ui tests
+
+      - name: Check syntax
+        run: |
+          python -m compileall main.py config.py text_utils.py ui tests
