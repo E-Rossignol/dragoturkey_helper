@@ -48,7 +48,7 @@ You can also find a demo video here: @TODO.
 3. Run the app
    python main.py
 
-You can also build a standalone Windows executable with PyInstaller using the scripts in `commands-pwsh.txt` or `build_py.py`.
+You can also build a standalone Windows executable with PyInstaller using the scripts in `commands-pwsh.txt` or `build_py.py`. The packaged config file is `app_config.json`, not `config.json`.
 
 ## Developer utilities
 Small helper functions exist in `text_utils.py` to keep the UI logic simple and testable:

@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Users\erwan\OneDrive\Bureau\desktop_software_test\.venv
+set VIRTUAL_ENV=C:\Personal_Projects\updated_flutter\dragoturkey_helper\.venv
 
 if not defined PROMPT set PROMPT=$P$G
 
